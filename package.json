@@ -11,9 +11,9 @@
 		"@toruslabs/fetch-node-details": "^2.6.1",
 		"@toruslabs/torus-embed": "^1.10.11",
 		"@toruslabs/torus.js": "^2.3.1",
-		"ethers": "^5.1.0"
+		"ethers": "^5.1.4"
 	},
 	"devDependencies": {
-		"prettier": "^2.2.1"
+		"prettier": "^2.3.0"
 	}
 }
