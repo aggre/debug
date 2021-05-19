@@ -1,5 +1,8 @@
 import { VercelRequest, VercelResponse } from "@vercel/node"
 import bent from "bent"
+import { config } from "dotenv"
+
+const { GITHUB_CLIENT_SECRETS } = config().parsed
 
 const headersWithAuth = (token: string) => ({
 	Authorization: `bearer ${token}`,
@@ -7,8 +10,20 @@ const headersWithAuth = (token: string) => ({
 })
 
 export default async (req: VercelRequest, res: VercelResponse) => {
-	const { access_token } = req.body
-	console.log({ access_token })
+	const { code } = req.body
+	console.log({ code })
+	const auth = await bent(
+		"https://github.com",
+		"POST",
+		"json"
+	)("/login/oauth/access_token", {
+		client_id: "6d3ef2327afe876bd74e",
+		client_secret: GITHUB_CLIENT_SECRETS,
+		code,
+	}).then((r) => r as unknown as { access_token?: string })
+
+	const { access_token } = auth
+
 	const github = bent("https://api.github.com", "POST", "json")
 	const headers = headersWithAuth(access_token)
 	const viwer = await github(
@@ -23,7 +38,7 @@ export default async (req: VercelRequest, res: VercelResponse) => {
 		headers
 	).then(
 		(r) =>
-			(r as unknown) as {
+			r as unknown as {
 				data: {
 					viewer: {
 						login: string
@@ -52,7 +67,7 @@ export default async (req: VercelRequest, res: VercelResponse) => {
 		headers
 	).then(
 		(r) =>
-			(r as unknown) as {
+			r as unknown as {
 				data: {
 					user: {
 						contributionsCollection: {
@@ -65,9 +80,8 @@ export default async (req: VercelRequest, res: VercelResponse) => {
 				}
 			}
 	)
-	const {
-		totalContributions,
-	} = result.data.user.contributionsCollection.contributionCalendar
+	const { totalContributions } =
+		result.data.user.contributionsCollection.contributionCalendar
 
 	res.send({ totalContributions })
 }
