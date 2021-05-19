@@ -3,7 +3,8 @@
 	"private": true,
 	"main": "index.mjs",
 	"scripts": {
-		"start": "node ./index.mjs",
+		"start": "node ./dist/index.js",
+		"build": "parcel ./index.mjs --target node --out-file index.js",
 		"test": "yarn start",
 		"lint": "prettier --write '**/*.{mjs,json,md,yml}'"
 	},
@@ -14,6 +15,7 @@
 		"ethers": "^5.1.4"
 	},
 	"devDependencies": {
+		"parcel-bundler": "^1.12.5",
 		"prettier": "^2.3.0"
 	}
 }

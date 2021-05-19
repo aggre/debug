@@ -1,10 +1,10 @@
-import FetchNodeDetails from "@toruslabs/fetch-node-details"
-import TorusUtils from "@toruslabs/torus.js"
+import FetchNodeDetails from "@toruslabs/fetch-node-details/dist/fetchNodeDetails-node"
+import TorusUtils from "@toruslabs/torus.js/dist/torusUtils-node"
 
 const fetchNodeDetails = new FetchNodeDetails()
 const torus = new TorusUtils()
-const verifier = "google"
-const verifierId = "hiroyuki.aggre@gmail.com"
+const verifier = "github"
+const verifierId = "aggre"
 fetchNodeDetails
 	.getNodeDetails()
 	.then(({ torusNodeEndpoints, torusNodePub }) =>
