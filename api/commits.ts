@@ -2,7 +2,7 @@ import { VercelRequest, VercelResponse } from "@vercel/node"
 import bent from "bent"
 import { config } from "dotenv"
 
-const { GITHUB_CLIENT_SECRETS } = config().parsed
+const { GITHUB_CLIENT_SECRETS } = config().parsed && process.env
 
 const headersWithAuth = (token: string) => ({
 	Authorization: `bearer ${token}`,
@@ -26,33 +26,11 @@ export default async (req: VercelRequest, res: VercelResponse) => {
 
 	const github = bent("https://api.github.com", "POST", "json")
 	const headers = headersWithAuth(access_token)
-	const viwer = await github(
-		"/graphql",
-		{
-			query: `{
-			viewer {
-			  login
-			}
-		  }`,
-		},
-		headers
-	).then(
-		(r) =>
-			r as unknown as {
-				data: {
-					viewer: {
-						login: string
-					}
-				}
-			}
-	)
-	const { login } = viwer.data.viewer
-	console.log({ login })
 	const result = await github(
 		"/graphql",
 		{
 			query: `{
-				user(login: "${login}") {
+				viewer {
 				  login
 				  contributionsCollection(from: "2020-01-01T00:00:00+00:00", to: "2021-01-01T00:00:00+00:00") {
 					restrictedContributionsCount
@@ -69,7 +47,7 @@ export default async (req: VercelRequest, res: VercelResponse) => {
 		(r) =>
 			r as unknown as {
 				data: {
-					user: {
+					viewer: {
 						contributionsCollection: {
 							restrictedContributionsCount: number
 							contributionCalendar: {
@@ -81,7 +59,7 @@ export default async (req: VercelRequest, res: VercelResponse) => {
 			}
 	)
 	const { totalContributions } =
-		result.data.user.contributionsCollection.contributionCalendar
+		result.data.viewer.contributionsCollection.contributionCalendar
 
 	res.send({ totalContributions })
 }
