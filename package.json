@@ -1,7 +1,6 @@
 {
-	"name": "debug-torus",
+	"name": "debug",
 	"private": true,
-	"main": "index.mjs",
 	"scripts": {
 		"start": "parcel index.html",
 		"serve": "vercel dev",
